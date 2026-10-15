@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Academia Horizonte | Tablero de Certificados{% endblock %}
+
+{% block extra_css %}
+<style>
+  .horizonte-header {
+    background-color: var(--color-navy);
+    border-bottom: 4px solid var(--color-gold);
+    border-radius: var(--radius-lg);
+    color: #fff;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .horizonte-header h1 { font-size: 1.6rem; margin: 0; }
+  .horizonte-header h1 span { color: var(--color-gold-light); }
+  .horizonte-header p { color: #cbd5e1; margin: 0.3rem 0 0; }
+  .contadores { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .contador {
+    flex: 1; min-width: 200px; background: #fff; border-radius: var(--radius-md);
+    padding: 1rem 1.25rem; box-shadow: var(--shadow-sm); border-top: 5px solid;
+  }
+  .contador .numero { font-size: 2.2rem; font-weight: 800; }
+  .contador .etiqueta { color: var(--color-text-secondary); font-weight: 600; }
+  .contador.aprobacion { border-color: #16a34a; }
+  .contador.aprobacion .numero { color: #16a34a; }
+  .contador.participacion { border-color: #2563eb; }
+  .contador.participacion .numero { color: #2563eb; }
+  .contador.sin { border-color: #dc2626; }
+  .contador.sin .numero { color: #dc2626; }
+  .filtro { margin-bottom: 1rem; }
+  .filtro select {
+    padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border); font-size: 0.95rem;
+  }
+  table.resultados { width: 100%; border-collapse: collapse; background: #fff; }
+  table.resultados th, table.resultados td {
+    padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--color-border-subtle);
+    text-align: left; font-size: 0.92rem;
+  }
+  table.resultados thead th { background: var(--color-navy); color: #fff; }
+  /* Color por tipo de certificado: verde, azul y rojo */
+  tr.fila-aprobacion td.cert { background: #dcfce7; color: #166534; font-weight: 700; }
+  tr.fila-participacion td.cert { background: #dbeafe; color: #1e40af; font-weight: 700; }
+  tr.fila-sin td.cert { background: #fee2e2; color: #991b1b; font-weight: 700; }
+  tr.fila-inconsistencia td.cert { background: #fef3c7; color: #92400e; font-weight: 700; }
+  .inconsistencias {
+    margin-top: 2rem; background: #fffbeb; border: 1px solid var(--color-gold-border);
+    border-left: 6px solid var(--color-gold); border-radius: var(--radius-md); padding: 1.25rem 1.5rem;
+  }
+  .inconsistencias h2 { color: var(--color-navy); margin-top: 0; }
+  .inconsistencias li { margin-bottom: 0.6rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="horizonte-header">
+  <h1>Academia <span>Horizonte</span></h1>
+  <p>Tablero de certificados por cohorte: promedios, asistencia e inconsistencias.</p>
+</header>
+
+<!-- Contadores: vienen del backend (totales calculados en models/certificados.py) -->
+<section class="contadores">
+  <div class="contador aprobacion">
+    <div class="numero">{{ totales.aprobacion }}</div>
+    <div class="etiqueta">Aprobación (≥ 70 y ≥ 80%)</div>
+  </div>
+  <div class="contador participacion">
+    <div class="numero">{{ totales.participacion }}</div>
+    <div class="etiqueta">Participación (&lt; 70 y ≥ 80%)</div>
+  </div>
+  <div class="contador sin">
+    <div class="numero">{{ totales.sin_certificado }}</div>
+    <div class="etiqueta">Sin certificado (&lt; 80% asistencia)</div>
+  </div>
+</section>
+
+<!-- Filtro por programa -->
+<div class="filtro">
+  <label for="filtroPrograma"><strong>Filtrar por programa:</strong></label>
+  <select id="filtroPrograma" onchange="filtrarPorPrograma()">
+    <option value="">Todos los programas</option>
+    {% for prog in programas %}
+    <option value="{{ prog }}">{{ prog }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<!-- Tabla de resultados ordenada por programa y nombre -->
+<table class="resultados" id="tablaResultados">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Programa</th>
+      <th>Módulos</th>
+      <th>Promedio</th>
+      <th>Asistencia</th>
+      <th>Certificado</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for est in estudiantes %}
+    {% if est.estado == 'Aprobación' %}
+    <tr class="fila-aprobacion" data-programa="{{ est.programa }}">
+    {% elif est.estado == 'Participación' %}
+    <tr class="fila-participacion" data-programa="{{ est.programa }}">
+    {% elif est.estado == 'Sin certificado' %}
+    <tr class="fila-sin" data-programa="{{ est.programa }}">
+    {% else %}
+    <tr class="fila-inconsistencia" data-programa="{{ est.programa }}">
+    {% endif %}
+      <td>{{ est.nombre_completo }}</td>
+      <td>{{ est.programa }}</td>
+      <td>{{ est.modulos }}</td>
+      <td>{{ "%.2f"|format(est.promedio) if est.promedio is number else "—" }}</td>
+      <td>{{ "%.2f"|format(est.asistencia) if est.asistencia is number else "—" }}{% if est.asistencia is number %}%{% endif %}</td>
+      <td class="cert">{{ est.estado }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Inconsistencias detectadas (regla R6) -->
+<section class="inconsistencias">
+  <h2>Inconsistencias ({{ inconsistencias|length }})</h2>
+  <ul>
+    {% for inc in inconsistencias %}
+    <li>
+      <strong>{{ inc.identificacion }}</strong> — {{ inc.nombre_completo }} ({{ inc.programa }}):
+      {{ inc.detalle }}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Filtra las filas de la tabla según el programa elegido
+  function filtrarPorPrograma() {
+    var elegido = document.getElementById('filtroPrograma').value;
+    var filas = document.querySelectorAll('#tablaResultados tbody tr');
+    filas.forEach(function (fila) {
+      if (!elegido || fila.getAttribute('data-programa') === elegido) {
+        fila.style.display = '';
+      } else {
+        fila.style.display = 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

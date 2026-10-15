@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Academia | Sistema de Certificados{% endblock %}</title>
+  
+  <!-- Tipografía moderna y elegante -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Paleta Cromática Oficial */
+      --color-navy: #14213D;
+      --color-navy-dark: #0d1527;
+      --color-navy-light: #22345b;
+      --color-gold: #B8923D;
+      --color-gold-light: #d4af37;
+      --color-gold-soft: #fbf7ed;
+      --color-gold-border: rgba(184, 146, 61, 0.3);
+
+      /* Fondos y Neutros */
+      --color-bg: #F8FAFC;
+      --color-surface: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-border-subtle: #F1F5F9;
+
+      /* Tipografía y Acentos */
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #475569;
+      --color-text-muted: #94A3B8;
+
+      /* Estados y Alertas */
+      --color-success-bg: #ECFDF5;
+      --color-success-text: #065F46;
+      --color-success-border: #A7F3D0;
+      --color-info-bg: #EFF6FF;
+      --color-info-text: #1E40AF;
+      --color-info-border: #BFDBFE;
+      --color-warning-bg: #FFFBEB;
+      --color-warning-text: #92400E;
+      --color-warning-border: #FCD34D;
+      --color-danger-bg: #FEF2F2;
+      --color-danger-text: #991B1B;
+      --color-danger-border: #FECACA;
+
+      /* Sombras y Radios */
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 12px -2px rgba(20, 33, 61, 0.08);
+      --shadow-lg: 0 12px 28px -4px rgba(20, 33, 61, 0.12);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* BARRA DE NAVEGACIÓN */
+    .navbar {
+      background-color: var(--color-navy);
+      border-bottom: 3px solid var(--color-gold);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: #FFFFFF;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--color-gold) 0%, #d4af37 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-navy);
+      box-shadow: 0 2px 8px rgba(184, 146, 61, 0.4);
+    }
+
+    .brand-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #FFFFFF;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-gold-light);
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #E2E8F0;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--color-navy-light);
+      color: #FFFFFF;
+    }
+
+    .nav-link.active {
+      background-color: rgba(184, 146, 61, 0.18);
+      color: var(--color-gold-light);
+      border: 1px solid var(--color-gold-border);
+    }
+
+    .nav-btn-gold {
+      background: linear-gradient(135deg, var(--color-gold) 0%, #c49d42 100%);
+      color: var(--color-navy-dark) !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 6px rgba(184, 146, 61, 0.3);
+    }
+
+    .nav-btn-gold:hover {
+      background: linear-gradient(135deg, #c49d42 0%, var(--color-gold) 100%) !important;
+      box-shadow: 0 4px 12px rgba(184, 146, 61, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .main-container {
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3.5rem;
+      flex: 1;
+    }
+
+    /* MENSAJES FLASH */
+    .flash-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .flash-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+      font-size: 0.925rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .flash-alert.success {
+      background-color: var(--color-success-bg);
+      color: var(--color-success-text);
+      border-left: 4px solid #10B981;
+    }
+
+    .flash-alert.error, .flash-alert.danger {
+      background-color: var(--color-danger-bg);
+      color: var(--color-danger-text);
+      border-left: 4px solid #EF4444;
+    }
+
+    .flash-alert.warning {
+      background-color: var(--color-warning-bg);
+      color: var(--color-warning-text);
+      border-left: 4px solid #F59E0B;
+    }
+
+    .flash-alert.info {
+      background-color: var(--color-info-bg);
+      color: var(--color-info-text);
+      border-left: 4px solid #3B82F6;
+    }
+
+    /* BOTONES GLOBALES */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      line-height: 1.3;
+    }
+
+    .btn-primary {
+      background-color: var(--color-navy);
+      color: #FFFFFF;
+      border-color: var(--color-navy);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-navy-light);
+      border-color: var(--color-navy-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--color-gold) 0%, #a48133 100%);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(184, 146, 61, 0.35);
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #c49d42 0%, var(--color-gold) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(184, 146, 61, 0.45);
+    }
+
+    .btn-outline {
+      background-color: #FFFFFF;
+      color: var(--color-navy);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--color-bg);
+      border-color: var(--color-navy);
+      color: var(--color-navy);
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8125rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* PIE DE PÁGINA */
+    .footer {
+      background-color: var(--color-navy);
+      color: #94A3B8;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.75rem 1.5rem;
+      margin-top: auto;
+      font-size: 0.825rem;
+    }
+
+    .footer-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      color: var(--color-gold-light);
+      font-weight: 600;
+    }
+
+    /* RESPONSIVIDAD */
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.85rem 1rem;
+      }
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-top: 0.5rem;
+      }
+      .main-container {
+        padding: 1.25rem 1rem 2.5rem;
+      }
+      .footer-container {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Barra de Navegación Oficial -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand" title="Academia - Sistema de Certificados">
+        <div class="brand-icon">
+          <!-- Icono Académico / Birrete SVG -->
+          <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">Academia</span>
+          <span class="brand-subtitle">Emisión y Verificación de Certificados</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              </svg>
+              Tablero
+            </a>
+          </li>
+          <li>
+            <a href="/cargar" class="nav-link {% if request.path == '/cargar' %}active{% endif %}">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Cargar Archivos
+            </a>
+          </li>
+          <li>
+            <a href="/descargar-todos" class="nav-link nav-btn-gold">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Descargar ZIP
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="main-container">
+    <!-- Mensajes Flash de Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash-alert {{ category }}">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0; margin-top:2px;" aria-hidden="true">
+                {% if category == 'success' %}
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                {% elif category in ['error', 'danger'] %}
+                  <circle cx="12" cy="12" r="9"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                {% elif category == 'warning' %}
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                {% else %}
+                  <circle cx="12" cy="12" r="9"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                {% endif %}
+              </svg>
+              <div>{{ message }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Pie de Página Institucional -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <span class="footer-brand">Academia</span> &copy; 2026. Sistema de Certificación y Verificación de Cursos.
+      </div>
+      <div>
+        Reglas de Negocio Automatizadas &bull; Cifras de Control Auditadas
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

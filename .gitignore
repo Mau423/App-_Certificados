@@ -1,12 +1,14 @@
-# Variables de entorno y secretos
-.env
-
-# Entorno virtual de Python
-.venv
-
-# Archivos temporales y compilados de Python
+# Bytecode y cachés de Python
 __pycache__/
 *.pyc
+*.pyo
 
-# Configuracion de despliegue Vercel
+# Archivos temporales del sistema y editores
+*.tmp
+*.log
+*~
+.DS_Store
+Thumbs.db
+
+# Carpeta local de la CLI de Vercel
 .vercel
