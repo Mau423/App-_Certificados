@@ -32,7 +32,7 @@ Gaps an agent must know: `app.py`, `services/generador_pdf.py` (`fpdf2`, A4 hori
 
 - Env is `.venv/` (CPython 3.12, created by `uv`); use `uv` wire, never `pip`. Run via `.venv\Scripts\python.exe` on Windows.
 - No `requirements*.txt` / `pyproject.toml`, no tests, no lint/CI, no `.env` committed.
-- Decided stack (see PLAN.md): `pandas`+`openpyxl` for Excel (DataFrame grouping/means; `xlrd`/`xlwings` rejected), `Flask`+Jinja for web (3–4 routes; `Django`/`FastAPI` rejected as overkill), `fpdf2` for PDFs (A4 horizontal), `psycopg`+`python-dotenv` for Supabase.
+- Decided stack (see PLAN.md): `pandas`+`openpyxl` for Excel (DataFrame grouping/means; `xlrd`/`xlwings` rejected), `Flask`+Jinja for web (3–4 routes; `Django`/`FastAPI` rejected as overkill), `fpdf2` for PDFs (A4 horizontal), `psycopg[binary]`+`python-dotenv` for Supabase (`[binary]` bundles libpq — plain `psycopg` fails on Vercel with "libpq library not found").
 - Build order: data-crossing → Flask backend (`app.py`, missing routes, `generador_pdf.py`) → views. Gates in PLAN.md.
 - Quick verify (fallback path, no DB needed):
   `.venv\Scripts\python.exe -c "from models.certificados import procesar_certificados; print(procesar_certificados()['totales'])"`
